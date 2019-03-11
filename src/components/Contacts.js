@@ -29,6 +29,15 @@ class Contacts extends Component {
         };
     }
 
+    deleteContact = (id) => {
+        // console.log(id);
+        const { contacts } = this.state;
+        const contactValue = contacts.filter( contact => contact.id !== id );
+        this.setState({
+            contacts: contactValue,
+        });
+    }
+
     render() {
         const { contacts } = this.state;
 
@@ -38,6 +47,7 @@ class Contacts extends Component {
                     <Contact 
                         key={contact.id}
                         contact ={contact}
+                        deleteClickHandler = {this.deleteContact.bind(this, contact.id)}
                     />
                 )}
             </div>

@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types'; 
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { Consumer } from '../context';
+
 class Contact extends React.Component {
     constructor() {
         super();
@@ -20,8 +22,8 @@ class Contact extends React.Component {
         });    
     }
 
-    onDeleteClick(e) {
-        this.props.deleteClickHandler();
+    onDeleteClick(id, dispatch) {
+        dispatch({ type: 'DELETE_CONTACT', payload: id})
     }
 
     render() {
@@ -29,20 +31,30 @@ class Contact extends React.Component {
         const { showContactInfo } = this.state;
         
         return (
-            <div className="card card-body mb-3">
-              <h4>{contact.name}
-              <i onClick={ this.onShowClick }  className="fas fa-sort-down" style={{cursor: 'pointer'}}></i>
-              <i className="fas fa-times"
-                onClick={ this.onDeleteClick }
-                style={{color: 'red',cursor: 'pointer', 
-                float: 'right'}}></i></h4>
-                { showContactInfo ? (
-                    <ul className="list-group">
-                        <li className="list-group-item">Email: {contact.email}</li>
-                        <li className="list-group-item">Phone: {contact.phone}</li>
-                    </ul>
-              ) : null}
-            </div>
+            <Consumer>
+                {value => {
+                    const { dispatch } = value;
+                    return (
+                        <div className="card card-body mb-3">
+                            <h4>{contact.name}
+                                <i onClick={ this.onShowClick }  className="fas fa-sort-down" style={{cursor: 'pointer'}}></i>
+                                <i className="fas fa-times"
+                                    onClick={ this.onDeleteClick.bind(this, contact.id, dispatch) }
+                                    style={{color: 'red',cursor: 'pointer', 
+                                    float: 'right'}}></i>
+                            </h4>
+                            { showContactInfo ? (
+                                    <ul className="list-group">
+                                        <li className="list-group-item">Email: {contact.email}</li>
+                                        <li className="list-group-item">Phone: {contact.phone}</li>
+                                    </ul>
+                            ) : null}
+                        </div>
+                    )
+                }}
+            </Consumer>
+
+            
           );
     }
         
@@ -58,7 +70,7 @@ Contact.defaultProps = {
 
 Contact.propTypes = {
     contact: PropTypes.object.isRequired,
-    deleteClickHandler: PropTypes.func.isRequired,
+    
 
 }
 export default Contact;
